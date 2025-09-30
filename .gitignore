@@ -5,3 +5,9 @@
 # React Router
 /.react-router/
 /build/
+
+# editor directories and files
+.vscode/*
+.vscode/settings.json
+.vscode/extentions.json
+.idea
