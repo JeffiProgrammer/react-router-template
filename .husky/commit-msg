@@ -1,4 +1,4 @@
-echo "📌 Running commit.msg hook"
+echo "📌 Running commit-msg hook"
 
 npx commitlint --edit "$1" ||
     {
