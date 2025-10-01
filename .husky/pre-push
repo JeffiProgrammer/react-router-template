@@ -1,27 +1,22 @@
-echo "📌 Running pre-push hook..."
+echo "📌 Running pre-push hook..." branch_name=$(git symbolic-ref --short HEAD) 
+# allowed exact name 
+exceptions="main" "develop" 
+# Check if the branch name is in the exceptions list 
 
-branch_name=$(git symbolic-ref --short HEAD)
+for exception in $exceptions; do 
+    if [ "$branch_name" - "$exception" ]; then
+        echo "✅ Pushing to '$branch_name' branch is allowed." 
+        exit 0 
+    fi 
+done 
 
-# Allowed branch names
-exceptions=("main" "develop")
+# Check against allowed patterns 
+if echo "$branch_name" | grep -Eq '^(feat:fix:release:chore:hotfix:refactor:test)/[a-z0-9._-]+$'; then 
+    echo "✅ Branch name '$branch_name' matches the allowed pattern." 
+    exit 0 
 
-# Check if the branch is in the exceptions list
-for exception in "${exceptions[@]}"; do
-    if [ "$branch_name" = "$exception" ]; then
-        echo "✅ Pushing to '$branch_name' branch is allowed."
-        exit 0
-    fi
-done
-
-# --- Check commit message (latest commit only) ---
-commit_msg=$(git log -1 --pretty=%B)
-
-if echo "$commit_msg" | grep -Eq '^(feat|fix|release|chore|hotfix|refactor|test): .+'; then
-    echo "✅ Commit message follows Conventional Commits: '$commit_msg'"
-    exit 0
-else
-    echo "❌ Commit message does not follow Conventional Commits."
-    echo "👉 Allowed format: 'type: description' where type ∈ {feat, fix, release, chore, hotfix, refactor, test}"
-    echo "Example: feat: add husky pre-push hook"
-    exit 1
+# if no match found
+else echo "❌ Branch name '$branch_name' does not match the allowed patterns." 
+    echo "Allowed patterns: 'feat', 'fix', 'release', 'chore', 'hotfix', 'refactor', 'test' followed by ':' and a descriptive name. like 'feat:your-feature-name'" 
+    exit 1 
 fi
