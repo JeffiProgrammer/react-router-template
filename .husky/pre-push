@@ -1,5 +1,3 @@
-#!/usr/bin/env sh
-
 echo "📌 Running pre-push hook..."
 
 # current branch
